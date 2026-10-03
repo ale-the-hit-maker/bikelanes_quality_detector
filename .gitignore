@@ -1,3 +1,2 @@
-
-!./raw_data/*.csv
 *.csv
+!raw_data/*.csv
