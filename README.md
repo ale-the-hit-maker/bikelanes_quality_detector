@@ -45,7 +45,7 @@ Only the packages used in the instruction sessions are needed:
 | matplotlib | 3.11.1 |
 | scikit-learn | 1.9.0 |
 
-
+**Execution**: Open group41.ipynb in Jupyter Notebook or VS Code and run "Run All".
  
  
  
@@ -67,12 +67,12 @@ All randomness is seeded (`random_state=42`) and the cross-validation splits are
 | y | perpendicular to the road, positive downwards |
 | z | horizontal, positive towards the direction of travel |
  
-**Recordings.** 15 recordings: 9 smooth, 6 bumpy, collected in and around Eindhoven in September 2026 by 2 riders on 2 different phones. A *smooth* lane is a regular red cycling lane without visible imperfections; a *bumpy* lane has noticeable roughness (potholes, cracks, uneven surfaces) but is still safe and representative of lanes that people use. The label is **one per recording** and is encoded in the folder name (`smooth_…`, `bumpy_…`), which is how the notebook reads it. Total duration: `TBD`. Final number of windows: 630 (`TBD` smooth / `TBD` bumpy).
+**Recordings.** 22 recordings: 11 smooth, 11 bumpy, collected in and around Eindhoven in September 2026 by 2 riders on 2 different phones. A *smooth* lane is a regular red cycling lane without visible imperfections; a *bumpy* lane has noticeable roughness (potholes, cracks, uneven surfaces) but is still safe and representative of lanes that people use. The label is **one per recording** and is encoded in the folder name (`smooth_…`, `bumpy_…`), which is how the notebook reads it. Total duration: `TBD`. Final number of windows: 630 (`TBD` smooth / `TBD` bumpy).
  
 | Class | Recording folders |
 | --- | --- |
-| bumpy (6) | `bumpy_con_tante_buche`, `bumpy_con_una_grande_curva_alla_fine`, `bumpy_stadio`, `bumpy_stazione`, `bumpy_stradabumpy_con_rialzi_e_buche`, `bumpy_swapfiets` |
-| smooth (9) | `smooth_con_fermata`, `smooth_con_fermata_2`, `smooth_con_un_po_di_rialzi_e_piccoli_tratti_saltellanti`, `smooth_grande_curva_apl_inizio`, `smooth_ma_con_irregolarita_periodiche_foto_`, `smooth_monknatlab`, `smooth_quartiere_bene_eindhoven`, `smooth_strada_universiya_ingresso`, `smooth_strda_turca` |
+| bumpy (11) | `bumpy_con_tante_buche`, `bumpy_con_una_grande_curva_alla_fine`, `bumpy_stadio`, `bumpy_stazione`, `bumpy_stradabumpy_con_rialzi_e_buche`, `bumpy_swapfiets`, `bumpy_campus`, `bumpy_casa`, `bumpy_park`, `bumpy_station`, `bumpy_station2`,  |
+| smooth (11) | `smooth_con_fermata`, `smooth_con_fermata_2`, `smooth_con_un_po_di_rialzi_e_piccoli_tratti_saltellanti`, `smooth_grande_curva_apl_inizio`, `smooth_ma_con_irregolarita_periodiche_foto_`, `smooth_monknatlab`, `smooth_quartiere_bene_eindhoven`, `smooth_strada_universiya_ingresso`, `smooth_strda_turca`, `smooth_lidl`, `smooth_tunnel` |
  
 (Some folders also carry a timestamp suffix such as `-2026-09-21_13-24-26`.)
  
