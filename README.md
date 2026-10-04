@@ -48,8 +48,7 @@ Only the packages used in the instruction sessions are needed:
 **Execution**: Open group41.ipynb in Jupyter Notebook or VS Code and run "Run All".
  
  
- 
-All randomness is seeded (`random_state=42`) and the cross-validation splits are deterministic (`GroupKFold`), so the numbers should be reproduced exactly on the same package versions. Expect the feature-selection cell to be the slowest one, because it runs a forward selection with an inner cross-validation for four models in each of the five outer folds. It also prints a long log (mutual-information ranking and dropped features per model and fold); this is intentional and is the reason the executed notebook is several MB.
+All randomness is seeded (random_state=42), so the results should be reproducible. The notebook performs a recording-level train/validation/test split, ensuring that windows from the same recording never appear in multiple sets. Feature selection is performed separately for each supervised model and is typically the slowest part of the execution.
  
 ---
  
@@ -67,13 +66,14 @@ All randomness is seeded (`random_state=42`) and the cross-validation splits are
 | y | perpendicular to the road, positive downwards |
 | z | horizontal, positive towards the direction of travel |
  
-**Recordings.** 22 recordings: 11 smooth, 11 bumpy, collected in and around Eindhoven in September 2026 by 2 riders on 2 different phones. A *smooth* lane is a regular red cycling lane without visible imperfections; a *bumpy* lane has noticeable roughness (potholes, cracks, uneven surfaces) but is still safe and representative of lanes that people use. The label is **one per recording** and is encoded in the folder name (`smooth_…`, `bumpy_…`), which is how the notebook reads it. Final number of windows: 882.
+**Recordings.** 27 recordings: 14 smooth, 13 bumpy, collected in and around Eindhoven in September 2026 by 3 riders on 3 different phones. A *smooth* lane is a regular red cycling lane without visible imperfections; a *bumpy* lane has noticeable roughness (potholes, cracks, uneven surfaces) but is still safe and representative of lanes that people use. The label is **one per recording** and is encoded in the folder name (`smooth_…`, `bumpy_…`), which is how the notebook reads it. Final number of windows: 1047.
  
 | Class | Recording folders |
 | --- | --- |
-| bumpy (11) | `bumpy_con_tante_buche`, `bumpy_con_una_grande_curva_alla_fine`, `bumpy_stadio`, `bumpy_stazione`, `bumpy_stradabumpy_con_rialzi_e_buche`, `bumpy_swapfiets`, `bumpy_campus`, `bumpy_casa`, `bumpy_park`, `bumpy_station`, `bumpy_station2`,  |
-| smooth (11) | `smooth_con_fermata`, `smooth_con_fermata_2`, `smooth_con_un_po_di_rialzi_e_piccoli_tratti_saltellanti`, `smooth_grande_curva_apl_inizio`, `smooth_ma_con_irregolarita_periodiche_foto_`, `smooth_monknatlab`, `smooth_quartiere_bene_eindhoven`, `smooth_strada_universiya_ingresso`, `smooth_strda_turca`, `smooth_lidl`, `smooth_tunnel` |
- 
+| bumpy (13) | `bumpy_campus`, `bumpy_casa`, `bumpy_con_tante_buche`, `bumpy_con_una_grande_curva_alla_fine`, `bumpy_park`, `bumpy_stadio`, `bumpy_stazione`, `bumpy_station`, `bumpy_station2`, `bumpy_stradabumpy_con_rialzi_e_buche`, `bumpy_swapfiets`, ... |
+| smooth (14) | `smooth_con_fermata`, `smooth_con_fermata_2`, `smooth_con_un_po_di_rialzi_e_piccoli_tratti_saltellanti`, `smooth_grande_curva_apl_inizio`, `smooth_lidl`, `smooth_ma_con_irregolarita_periodiche_foto_`, `smooth_monknatlab`, `smooth_quartiere_bene_eindhoven`, `smooth_strada_universiya_ingresso`, `smooth_strda_turca`, `smooth_tunnel`, ... |
+
+
 (Some folders also carry a timestamp suffix such as `-2026-09-21_13-24-26`.)
  
 **Known limitations of the data.** Small dataset; one label per recording; bike, phone, rider, session and speed are not controlled, so they can be partly confounded with the class; no GPS, so slope, yaw and speed are not corrected. These are discussed in the report.
@@ -91,15 +91,15 @@ All randomness is seeded (`random_state=42`) and the cross-validation splits are
 3. **Band-pass filter:** 4th-order Butterworth, zero phase, accelerometer 10–40 Hz, gyroscope 5–40 Hz, applied separately to each continuous segment.
 4. **Windowing and labelling:** 3 s windows, 30 % overlap, never across a removed segment; the label comes from the recording name.
 5. **Feature extraction:** 105 time- and frequency-domain features per window (17 per accelerometer channel, 18 per gyroscope channel).
-6. **Feature selection** (inside each outer training fold)
-   - *Supervised models:* mutual information ranking → correlation filter (|ρ| > 0.8) → model-specific forward selection with an inner grouped CV (4 to 12 features).
+6. **Feature selection** (training data only)
+   - *Supervised models:* mutual information ranking → correlation filter (|ρ| > 0.8) → model-specific forward selection.
    - *Unsupervised models:* correlation filter (|ρ| > 0.9) → standardisation → PCA (max. 6 components). No labels are used.
-7. **Normalisation:** `StandardScaler` fitted on the training part of each fold only.
-8. **Modeling and evaluation:** 5-fold `GroupKFold` with the recording as group.
-   - Supervised: KNN, Logistic Regression, Random Forest, SVM (RBF).
-   - Unsupervised: K-Means, Fuzzy C-means, Gustafson-Kessel, Hierarchical Clustering (on the PCA components).
-   - Metrics: macro-F1, accuracy, per-class recall, confusion matrices; ARI for the unsupervised models. ` TODO : update with the final list`
-9. **Deployment:** the selected model is applied to the independent external dataset (never used for training or testing) and the smooth and bumpy sections are visualised.
+7. **Normalisation:** `StandardScaler` fitted on the training set only and applied unchanged to the validation and test sets.
+8. **Modeling and evaluation:** - Recording-level train/validation/test split.
+- Supervised models: KNN, Logistic Regression, Random Forest and SVM (RBF).
+- Unsupervised models: K-Means, Fuzzy C-Means, Gustafson-Kessel and Hierarchical Clustering.
+- Metrics: accuracy, macro-F1 and per-class recall for supervised models; Adjusted Rand Index (ARI) for unsupervised models. Clusters are additionally mapped to their majority class to enable direct comparison with the supervised classifiers.
+9. **Deployment:** The selected model can be retrained on the full external dataset and applied to new recordings using the same preprocessing and feature-extraction pipeline.
 
 > **Leakage.** Windows from the same recording are never split between training and test (they overlap and are almost identical). Feature selection, scaling and PCA see only the training recordings of each fold. One exception that we know of: the filter band was chosen by inspecting the spectra of all recordings; it is a wide band and the choice was visual, but it is not completely independent of the test folds.
  
