@@ -67,7 +67,7 @@ All randomness is seeded (`random_state=42`) and the cross-validation splits are
 | y | perpendicular to the road, positive downwards |
 | z | horizontal, positive towards the direction of travel |
  
-**Recordings.** 22 recordings: 11 smooth, 11 bumpy, collected in and around Eindhoven in September 2026 by 2 riders on 2 different phones. A *smooth* lane is a regular red cycling lane without visible imperfections; a *bumpy* lane has noticeable roughness (potholes, cracks, uneven surfaces) but is still safe and representative of lanes that people use. The label is **one per recording** and is encoded in the folder name (`smooth_…`, `bumpy_…`), which is how the notebook reads it. Total duration: `TBD`. Final number of windows: 630 (`TBD` smooth / `TBD` bumpy).
+**Recordings.** 22 recordings: 11 smooth, 11 bumpy, collected in and around Eindhoven in September 2026 by 2 riders on 2 different phones. A *smooth* lane is a regular red cycling lane without visible imperfections; a *bumpy* lane has noticeable roughness (potholes, cracks, uneven surfaces) but is still safe and representative of lanes that people use. The label is **one per recording** and is encoded in the folder name (`smooth_…`, `bumpy_…`), which is how the notebook reads it. Final number of windows: 882.
  
 | Class | Recording folders |
 | --- | --- |
@@ -97,7 +97,7 @@ All randomness is seeded (`random_state=42`) and the cross-validation splits are
 7. **Normalisation:** `StandardScaler` fitted on the training part of each fold only.
 8. **Modeling and evaluation:** 5-fold `GroupKFold` with the recording as group.
    - Supervised: KNN, Logistic Regression, Random Forest, SVM (RBF).
-   - Unsupervised: K-Means, Hierarchical clustering, GMM, DBSCAN (on the PCA components).
+   - Unsupervised: K-Means, Fuzzy C-means, Gustafson-Kessel, Hierarchical Clustering (on the PCA components).
    - Metrics: macro-F1, accuracy, per-class recall, confusion matrices; ARI for the unsupervised models. ` TODO : update with the final list`
 9. **Deployment:** the selected model is applied to the independent external dataset (never used for training or testing) and the smooth and bumpy sections are visualised.
 
